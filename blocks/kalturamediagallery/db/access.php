@@ -21,7 +21,7 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
-            'user' => CAP_PROHIBIT
+            // Don't give this anyone by default.
         ),
 
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
