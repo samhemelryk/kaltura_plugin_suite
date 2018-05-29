@@ -340,9 +340,10 @@ function local_kaltura_strip_querystring($endpoint, $params) {
 function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $editor = null) {
     global $CFG, $USER;
     
-    if(is_null($editor))
-    {
-        $editor = 'tinymce';
+    if(is_null($editor)) {
+        /** @var atto_texteditor $editor */
+        $editorobject = editors_get_preferred_editor();
+        $editor = substr(get_class($editorobject), 0, -(strlen('_texteditor')));
     }
 
     $requestparams = array();
