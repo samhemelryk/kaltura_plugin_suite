@@ -315,15 +315,15 @@ function local_kaltura_format_typeconfig($lti, $withblocks = true) {
  * @param string $endpoint The URL to access the KAF LTI tool.
  * @param string $params The signed parameters returned by @see lti_sign_parameters().
  */
-function local_kaltura_strip_querystring($endpoint, $params) {
+function local_kaltura_strip_querystring($endpoint, &$params) {
     $endpointurl = new moodle_url($endpoint);
     $endpointparams = $endpointurl->params();
 
     // Strip querystring params in endpoint url from $parms to avoid duplication.
-    if (!empty($endpointparams) && !empty($parms)) {
+    if (!empty($endpointparams) && !empty($params)) {
         foreach (array_keys($endpointparams) as $paramname) {
-            if (isset($parms[$paramname])) {
-                unset($parms[$paramname]);
+            if (isset($params[$paramname])) {
+                unset($params[$paramname]);
             }
         }
     }
