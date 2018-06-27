@@ -180,18 +180,6 @@ function kalvidassign_user_complete($course, $user, $mod, $kalvidassign) {
 }
 
 /**
- * Given a course and a time, this module should find recent activity
- * that has occurred in kalvidassign activities and print it out.
- * Return true if there was output, or false is there was none.
- *
- * @return boolean Always returns false.
- */
-function kalvidassign_print_recent_activity($course, $viewfullnames, $timestart) {
-    return false;
-}
-
-
-/**
  * Must return an array of users who are participants for a given instance
  * of kalvidassign. Must include every user involved in the instance,
  * independient of his role (student, teacher, admin...). The returned objects
