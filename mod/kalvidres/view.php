@@ -23,59 +23,31 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
-$id = optional_param('id', 0, PARAM_INT);
+$id = required_param('id', PARAM_INT);
 
 // Retrieve module instance.
-if (empty($id)) {
-    print_error('invalidid', 'kalvidres');
-}
-
-if (!empty($id)) {
-
-    if (!$cm = get_coursemodule_from_id('kalvidres', $id)) {
-        print_error('invalidcoursemodule');
-    }
-
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
-    }
-
-    if (!$kalvidres = $DB->get_record('kalvidres', array("id" => $cm->instance))) {
-        print_error('invalidid', 'kalvidres');
-    }
-}
-
-require_course_login($course->id, true, $cm);
-
-global $SESSION, $CFG;
-
+list ($course, $cm) = get_course_and_cm_from_cmid($id, 'kalvidres');
+$context = context_module::instance($cm->id);
 $PAGE->set_url('/mod/kalvidres/view.php', array('id' => $id));
+$PAGE->set_context($context);
+
+$kalvidres = $DB->get_record('kalvidres', array("id" => $cm->instance), '*', MUST_EXIST);
+
+require_course_login($course, true, $cm);
+
 $PAGE->set_title(format_string($kalvidres->name));
 $PAGE->set_heading($course->fullname);
 $pageclass = 'kaltura-kalvidres-body';
 $PAGE->add_body_class($pageclass);
 
-$context = $PAGE->context;
-
 $event = \mod_kalvidres\event\video_resource_viewed::create(array(
     'objectid' => $kalvidres->id,
-    'context' => context_module::instance($cm->id)
+    'context' => $context
 ));
 $event->trigger();
 
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
-
-echo $OUTPUT->header();
-
-$description = format_module_intro('kalvidres', $kalvidres, $cm->id);
-if (!empty($description)) {
-    echo $OUTPUT->box_start('generalbox');
-    echo $description;
-    echo $OUTPUT->box_end();
-}
-
-$renderer = $PAGE->get_renderer('mod_kalvidres');
 
 // Require a YUI module to make the object tag be as large as possible.
 $params = array(
@@ -87,6 +59,15 @@ $params = array(
 );
 $PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
 
-echo $renderer->display_iframe($kalvidres, $course->id);
+/** @var mod_kalvidres_renderer|core_renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_kalvidres');
 
-echo $OUTPUT->footer();
+echo $renderer->header();
+
+$description = format_module_intro('kalvidres', $kalvidres, $cm->id);
+if (!empty($description)) {
+    echo $renderer->box($description, 'generalbox');
+}
+
+echo $renderer->display_iframe($kalvidres, $course->id);
+echo $renderer->footer();

@@ -27,11 +27,8 @@ require_once($CFG->dirroot.'/mod/kalvidassign/locallib.php');
 
 $id = required_param('id', PARAM_INT); // Course ID.
 
-$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
-
+$course = get_course($id);
 require_login($course);
-
-global $SESSION, $CFG;
 
 $strplural = get_string("modulenameplural", "mod_kalvidassign");
 $PAGE->set_url('/mod/kalvidassign/index.php', array('id' => $id));
@@ -40,9 +37,9 @@ $PAGE->navbar->add($strplural);
 $PAGE->set_title($strplural);
 $PAGE->set_heading($course->fullname);
 
-echo $OUTPUT->header();
-
+/** @var mod_kalvidassign_renderer|core_renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_kalvidassign');
-$renderer->display_kalvidassignments_table($course);
 
-echo $OUTPUT->footer();
+echo $renderer->header();
+echo $renderer->kalvidassignments_table($course);
+echo $renderer->footer();

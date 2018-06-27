@@ -21,21 +21,14 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-/**
- * This function returns true if the assignment submission period is over
- *
- * @param kalvidassign obj
- *
- * @return bool - true if assignment submission period is over else false
- */
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/lib/gradelib.php');
+require_once($CFG->dirroot . '/local/kaltura/locallib.php');
 
 define('KALASSIGN_ALL', 0);
 define('KALASSIGN_REQ_GRADING', 1);
 define('KALASSIGN_SUBMITTED', 2);
-
-require_once(dirname(dirname(dirname(__FILE__))).'/lib/gradelib.php');
-require_once($CFG->dirroot.'/mod/kalvidassign/renderable.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
 
 /**
  * Check if the assignment submission end date has passed or if late submissions
@@ -90,7 +83,7 @@ function kalvidassign_get_submissions($kalvidassignid, $filter = '') {
 }
 
 /**
- * This function retrives the user's submission record.
+ * This function retrieves the user's submission record.
  * @param int $kalvidassignid The activity instance id.
  * @param int $userid The user id.
  * @return object A data object consisting of the user's submission.
@@ -103,7 +96,6 @@ function kalvidassign_get_submission($kalvidassignid, $userid) {
     $where .= ' vidassignid = :instanceid AND userid = :userid';
 
     // Reordering the fields returned to make it easier to use in the grade_get_grades function.
-    $columns = 'userid,id,vidassignid,entry_id,grade,submissioncomment,format,teacher,mailed,timemarked,timecreated,timemodified,source,width,height';
     $record = $DB->get_record_select('kalvidassign_submission', $where, $param, '*');
 
     if (empty($record)) {
@@ -147,17 +139,8 @@ function kalvidassign_get_submission_grade_object($instanceid, $userid) {
 function kalvidassign_validate_cmid ($cmid) {
     global $DB;
 
-    if (!$cm = get_coursemodule_from_id('kalvidassign', $cmid)) {
-        print_error('invalidcoursemodule');
-    }
-
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
-    }
-
-    if (!$kalvidassignobj = $DB->get_record('kalvidassign', array('id' => $cm->instance))) {
-        print_error('invalidid', 'kalvidassign');
-    }
+    list ($course, $cm) = get_course_and_cm_from_cmid($cmid, 'kalvidassign');
+    $kalvidassignobj = $DB->get_record('kalvidassign', array("id" => $cm->instance), '*', MUST_EXIST);
 
     return array($cm, $course, $kalvidassignobj);
 }
@@ -319,27 +302,30 @@ function kalvidassign_email_teachers_text($info) {
 /**
  * Creates the html content for emails to teachers
  *
- * @param object $info The info used by the 'emailteachermailhtml' language string
+ * @param \stdClass $info The info used by the 'emailteachermailhtml' language string
  * @return string
  */
 function kalvidassign_email_teachers_html($info) {
-    global $CFG, $DB;
 
-    $param    = array('id' => $info->courseid);
-    $course   = $DB->get_record('course', $param);
     $posthtml = '';
 
-    if (!empty($course)) {
-        $posthtml .= html_writer::start_tag('p');
-        $attr = array('href' => new moodle_url('/course/view.php', array('id' => $course->id)));
-        $posthtml .= html_writer::tag('a', format_string($course->shortname, true, $course->id), $attr);
+    if (!empty($info->courseid)) {
+
+        $course   = get_course($info->courseid);
+        $posthtml .= '<p>';
+        $posthtml .= html_writer::link(
+            new moodle_url('/course/view.php', array('id' => $course->id)),
+            format_string($course->shortname, true, array('context' => context_module::instance($info->cmid)))
+        );
         $posthtml .= '->';
-        $attr = array('href' => new moodle_url('/mod/kalvidassign/view.php', array('id' => $info->cmid)));
-        $posthtml .= html_writer::tag('a', format_string($info->assignment, true, $course->id), $attr);
-        $posthtml .= html_writer::end_tag('p');
-        $posthtml .= html_writer::start_tag('hr');
+        $posthtml .= html_writer::link(
+            new moodle_url('/mod/kalvidassign/view.php', array('id' => $info->cmid)),
+            format_string($info->assignment, true, array('context' => context_module::instance($info->cmid)))
+        );
+        $posthtml .= '</p>';
+        $posthtml .= '<hr>';
         $posthtml .= html_writer::tag('p', get_string('emailteachermailhtml', 'kalvidassign', $info));
-        $posthtml .= html_writer::end_tag('hr');
+        $posthtml .= '</hr>';
     }
     return $posthtml;
 }
@@ -353,4 +339,22 @@ function kalvidassign_get_assignment_students($cm) {
     $users = get_enrolled_users($context, 'mod/kalvidassign:submit', 0, 'u.id');
 
     return $users;
+}
+
+/**
+ * Returns a count of submissions for the given kalvideo object.
+ * @param \stdClass $kalvideoobj
+ * @return int
+ */
+function kalvidassign_count_submissions($kalvideoobj) {
+    global $DB;
+    $param = array('vidassignid' => $kalvideoobj->id, 'timecreated' => 0, 'timemodified' => 0);
+
+    $csql = "SELECT COUNT(*)
+                      FROM {kalvidassign_submission}
+                     WHERE vidassignid = :vidassignid
+                           AND (timecreated > :timecreated OR timemodified > :timemodified) ";
+
+    $count = $DB->count_records_sql($csql, $param);
+    return $count;
 }

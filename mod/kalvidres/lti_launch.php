@@ -24,17 +24,17 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
-
-global $USER;
-
-require_login();
+require_once($CFG->dirroot . '/local/kaltura/locallib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 $height = required_param('height', PARAM_INT);
 $width = required_param('width', PARAM_INT);
 $withblocks = optional_param('withblocks', 0, PARAM_INT);
 $source = optional_param('source', '', PARAM_URL);
+
+$course = get_course($courseid);
+
+require_login($course, false);
 
 $context = context_course::instance($courseid);
 
@@ -43,8 +43,6 @@ if (!has_capability('mod/kalvidres:addinstance', $context) && is_guest($context)
     echo get_string('nocapabilitytousethisservice', 'error');
     die();
 }
-
-$course = get_course($courseid);
 
 $launch = array();
 $launch['id'] = 1;

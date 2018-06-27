@@ -25,26 +25,24 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
-global $USER, $PAGE;
-
-require_login();
 $courseid = required_param('courseid', PARAM_INT);
 
-$context = context_course::instance($courseid);
+$PAGE->set_url('/local/kalturamediagallery/index.php', array('courseid' => $courseid));
+
+require_login($courseid);
+
+$course = get_course($courseid);
+$context = context_course::instance($course->id);
 require_capability('local/kalturamediagallery:view', $context);
 
 $mediagallery = get_string('heading_mediagallery', 'local_kalturamediagallery');
 
-$course = get_course($courseid);
-
 $PAGE->set_context($context);
-$PAGE->set_course($course);
 $site = get_site();
 $header  = format_string($site->shortname).": $mediagallery";
 
 $PAGE->navbar->add(get_string('nav_mediagallery', 'local_kalturamediagallery'));
 
-$PAGE->set_url('/local/kalturamediagallery/index.php', array('courseid' => $courseid));
 $PAGE->set_pagetype('kalturamediagallery-index');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title($header);
@@ -52,18 +50,6 @@ $PAGE->set_heading($header);
 
 $pageclass = 'kaltura-mediagallery-body';
 $PAGE->add_body_class($pageclass);
-
-echo $OUTPUT->header();
-
-// Request the launch content with an iframe tag.
-$attr = array(
-    'id' => 'contentframe',
-    'height' => '600px',
-    'width' => '100%',
-    'allowfullscreen' => 'true',
-    'src' => 'lti_launch.php?courseid='.$courseid
-);
-echo html_writer::tag('iframe', '', $attr);
 
 // Require a YUI module to make the iframe tag be as large as possible.
 $params = array(
@@ -73,4 +59,15 @@ $params = array(
 );
 $PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
 
+echo $OUTPUT->header();
+
+// Request the launch content with an iframe tag.
+$attr = array(
+    'id' => 'contentframe',
+    'height' => '600px',
+    'width' => '100%',
+    'allowfullscreen' => 'true',
+    'src' => new moodle_url('/local/kalturamediagallery/lti_launch.php', ['courseid' => $courseid])
+);
+echo html_writer::tag('iframe', '', $attr);
 echo $OUTPUT->footer();

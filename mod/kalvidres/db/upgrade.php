@@ -28,7 +28,7 @@ function xmldb_kalvidres_upgrade($oldversion) {
 
         // Changing type of field intro on table kalvidres to text.
         $table = new xmldb_table('kalvidres');
-        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'name');
+        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, null, null, null, null, null, 'name');
 
         // Launch change of type for field intro.
         $dbman->change_field_type($table, $field);

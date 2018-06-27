@@ -30,3 +30,6 @@ $plugin->component = 'local_kaltura';
 $plugin->release = 'Kaltura release 4.1.1';
 $plugin->requires = 2014050800;
 $plugin->maturity = MATURITY_STABLE;
+$plugin->dependencies = array(
+    'mod_lti' => 2016120500
+);

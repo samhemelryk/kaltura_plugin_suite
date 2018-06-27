@@ -25,8 +25,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-require_once(dirname(dirname(dirname(__FILE__))).'/course/moodleform_mod.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/local/kaltura/locallib.php');
 
 class mod_kalvidres_mod_form extends moodleform_mod {
     /** @var string Part of the id for the add video button. */

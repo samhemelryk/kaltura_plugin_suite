@@ -21,11 +21,9 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(dirname(__FILE__))).'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 class kalvidassign_singlesubmission_form extends moodleform {
 
@@ -33,7 +31,7 @@ class kalvidassign_singlesubmission_form extends moodleform {
      * This function defines the forums elments that are to be displayed
      */
     public function definition() {
-        global $CFG, $PAGE;
+        global $CFG;
 
         $mform =& $this->_form;
 
@@ -175,7 +173,6 @@ class kalvidassign_singlesubmission_form extends moodleform {
     /**
      * This function sets the text editor format.
      * @param object|array $data object or array of default values
-     * @return void
      */
     public function set_data($data) {
 
@@ -187,7 +184,7 @@ class kalvidassign_singlesubmission_form extends moodleform {
 
         $editoroptions = $this->get_editor_options();
 
-        return parent::set_data($data);
+        parent::set_data($data);
 
     }
 

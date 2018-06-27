@@ -41,6 +41,7 @@ $string['submitvideo'] = 'Submit media';
 $string['replacevideo'] = 'Replace media';
 $string['previewvideo'] = 'Preview';
 $string['gradesubmission'] = 'Grade submissions';
+$string['gradesubmissionforuser'] = 'Grade submissions: {$a}';
 $string['numberofsubmissions'] = 'Number of submissions: {$a}';
 $string['assignmentexpired'] = 'Submission cancelled.  The assignment due date has passed';
 $string['assignmentsubmitted'] = 'Success, your assignment has been submitted';

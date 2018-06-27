@@ -26,24 +26,19 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
 
-global $USER;
-
-require_login();
 $courseid = required_param('courseid', PARAM_INT);
 $height = required_param('height', PARAM_INT);
 $width = required_param('width', PARAM_INT);
 $withblocks = optional_param('withblocks', 0, PARAM_INT);
 $source = optional_param('source', '', PARAM_URL);
 
+$course = get_course($courseid);
 $context = context_course::instance($courseid);
 
-// If the user isn't a teacher or they are not enrolled in the course context then return with an error.
-if (!has_capability('mod/kalvidpres:addinstance', $context) && is_guest($context)) {
-    echo get_string('nocapabilitytousethisservice', 'error');
-    die();
-}
+require_login($course, false);
 
-$course = get_course($courseid);
+// If the user can't add an instance then they can't access this script.
+require_capability('mod/kalvidpres:addinstance', $context);
 
 $launch = array();
 $launch['id'] = 1;

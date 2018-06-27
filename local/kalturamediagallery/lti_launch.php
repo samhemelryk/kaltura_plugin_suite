@@ -26,14 +26,13 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
 
-global $USER;
-
-require_login();
 $courseid = required_param('courseid', PARAM_INT);
 
-$context = context_course::instance($courseid);
-require_capability('local/kalturamediagallery:view', $context);
+require_login($courseid);
+
 $course = get_course($courseid);
+$context = context_course::instance($course->id);
+require_capability('local/kalturamediagallery:view', $context);
 
 $launch = array();
 $launch['id'] = 1;

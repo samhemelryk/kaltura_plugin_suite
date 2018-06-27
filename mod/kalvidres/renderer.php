@@ -25,25 +25,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
+require_once($CFG->dirroot . '/local/kaltura/locallib.php');
 
 class mod_kalvidres_renderer extends plugin_renderer_base {
-    /**
-     * This function displays the title of the video in bold.
-     * @param string $title The title of the video.
-     * @return string HTML markup.
-     */
-    public function display_mod_info($title) {
-        $output = '';
-
-        $attr = array('for' => 'video_name');
-        $output .= html_writer::start_tag('b');
-        $output .= html_writer::tag('div', $title);
-        $output .= html_writer::end_tag('b');
-        $output .= html_writer::empty_tag('br');
-
-        return $output;
-    }
 
     /**
      * This function displays the iframe markup.

@@ -24,11 +24,8 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
+require_once($CFG->dirroot . '/local/kaltura/locallib.php');
 
-global $USER;
-
-require_login();
 $courseid = required_param('courseid', PARAM_INT);
 $cmid = required_param('cmid', PARAM_INT);
 $height = required_param('height', PARAM_INT);
@@ -36,11 +33,10 @@ $width = required_param('width', PARAM_INT);
 $withblocks = optional_param('withblocks', 0, PARAM_INT);
 $source = required_param('source', PARAM_TEXT);
 
-// The capability requirement should always be at the course module context.
-// This inherits course context if not set. Otherwise module local role assignments breaks.
-require_capability('mod/kalvidassign:gradesubmission', context_module::instance($cmid));
+list($cm, $course, $kalvidassign) = kalvidassign_validate_cmid($cmid);
 
-$course = get_course($courseid);
+require_login($course, false, $cm, false);
+require_capability('mod/kalvidassign:gradesubmission', context_module::instance($cm->id));
 
 $launch = array();
 $launch['id'] = 1;
@@ -62,8 +58,7 @@ if (false === local_kaltura_url_contains_configured_hostname($source) && !empty(
 }
 
 if (local_kaltura_validate_browseembed_required_params($launch)) {
-    $content = local_kaltura_request_lti_launch($launch, $withblocks);
-    echo $content;
+    echo local_kaltura_request_lti_launch($launch, $withblocks);
 } else {
     echo get_string('invalid_launch_parameters', 'mod_kalvidassign');
 }

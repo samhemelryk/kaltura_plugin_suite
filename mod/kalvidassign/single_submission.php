@@ -22,57 +22,36 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/renderer.php');
-require_once(dirname(__FILE__).'/locallib.php');
-require_once(dirname(__FILE__).'/single_submission_form.php');
+require_once($CFG->dirroot . '/mod/kalvidassign/lib.php');
+require_once($CFG->dirroot . '/mod/kalvidassign/locallib.php');
+require_once($CFG->dirroot . '/mod/kalvidassign/single_submission_form.php');
 
-$id     = required_param('cmid', PARAM_INT);
+$id = required_param('cmid', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 $tifirst = optional_param('tifirst', '', PARAM_TEXT);
-$tilast  = optional_param('tilast', '', PARAM_TEXT);
-$page    = optional_param('page', 0, PARAM_INT);
+$tilast = optional_param('tilast', '', PARAM_TEXT);
+$page = optional_param('page', 0, PARAM_INT);
 
 
 list($cm, $course, $kalvidassignobj) = kalvidassign_validate_cmid($id);
-
-require_login($course->id, false, $cm);
-
-if (!confirm_sesskey()) {
-    print_error('confirmsesskeybad', 'error');
-}
-
-global $CFG, $PAGE, $OUTPUT, $USER;
-
-$url = new moodle_url('/mod/kalvidassign/single_submission.php');
-$url->params(array('cmid' => $id, 'userid' => $userid));
-
 $context = context_module::instance($cm->id);
 
+$url = new moodle_url('/mod/kalvidassign/single_submission.php', array('cmid' => $id, 'userid' => $userid));
+
 $PAGE->set_url($url);
-$PAGE->set_title(format_string($kalvidassignobj->name));
-$PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
 
-$previousurl = new moodle_url('/mod/kalvidassign/grade_submissions.php', array('cmid' => $cm->id, 'tifirst' => $tifirst, 'tilast' => $tilast, 'page' => $page));
-$prevousurlstring = get_string('singlesubmissionheader', 'kalvidassign');
-$PAGE->navbar->add($prevousurlstring, $previousurl);
-$PAGE->requires->css('/local/kaltura/styles.css');
-
+require_login($course->id, false, $cm);
 require_capability('mod/kalvidassign:gradesubmission', $context);
+require_sesskey();
 
-$event = \mod_kalvidassign\event\single_submission_page_viewed::create(array(
-    'objectid'  => $kalvidassignobj->id,
-    'context' => context_module::instance($cm->id)
-));
-$event->trigger();
+$previousurl = new moodle_url('/mod/kalvidassign/grade_submissions.php', array('cmid' => $cm->id, 'tifirst' => $tifirst, 'tilast' => $tilast, 'page' => $page));
 
 // Get a single submission record
 $submission = kalvidassign_get_submission($cm->instance, $userid);
 
 // Get the submission user and the time they submitted the video
-$param = array('id' => $userid);
-$user  = $DB->get_record('user', $param);
+$user  = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
 $submissionuserpic = $OUTPUT->user_picture($user);
 $submissionmodified = ' - ';
@@ -94,8 +73,7 @@ if (!empty($submission)) {
 
     $submissionuserinfo .= '<br />'.$submissionmodified.$datestringlate;
 
-    $param   = array('id' => $submission->teacher);
-    $teacher = $DB->get_record('user', $param);
+    $teacher = $DB->get_record('user', array('id' => $submission->teacher), '*', IGNORE_MISSING);
 }
 
 $markingteacherpic   = '';
@@ -126,9 +104,12 @@ $formdata->tilast                   = $tilast;
 $formdata->page                     = $page;
 
 $submissionform = new kalvidassign_singlesubmission_form(null, $formdata);
+$submissionform->set_data($formdata);
 
 if ($submissionform->is_cancelled()) {
+
     redirect($previousurl);
+
 } else if ($submitted_data = $submissionform->get_data()) {
 
     if (!isset($submitted_data->cancel) && isset($submitted_data->xgrade) && isset($submitted_data->submissioncomment_editor)) {
@@ -151,6 +132,7 @@ if ($submissionform->is_cancelled()) {
                 $submission->teacher = $USER->id;
                 $DB->update_record('kalvidassign_submission', $submission);
             }
+
         } else {
 
             // Check for unchanged values
@@ -215,13 +197,26 @@ if ($submissionform->is_cancelled()) {
 
 }
 
-$pageheading = get_string('gradesubmission', 'kalvidassign');
+// OK, they are viewing the page, record it.
+$event = \mod_kalvidassign\event\single_submission_page_viewed::create(array(
+    'objectid'  => $kalvidassignobj->id,
+    'context' => context_module::instance($cm->id)
+));
+$event->trigger();
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading($pageheading.': '.fullname($user));
+$prevousurlstring = get_string('singlesubmissionheader', 'kalvidassign');
 
-$submissionform->set_data($formdata);
+$PAGE->set_title($kalvidassignobj->name);
+$PAGE->set_heading($course->fullname);
+$PAGE->navbar->add($prevousurlstring, $previousurl);
+$PAGE->requires->css('/local/kaltura/styles.css');
+
+/** @var mod_kalvidassign_renderer|core_renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_kalvidassign');
+
+echo $renderer->header();
+echo $renderer->heading(get_string('gradesubmissionforuser', 'kalvidassign', fullname($user)));
 
 $submissionform->display();
 
-echo $OUTPUT->footer();
+echo $renderer->footer();

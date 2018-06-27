@@ -23,31 +23,13 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
-$id = optional_param('id', 0, PARAM_INT);
+$id = required_param('id', PARAM_INT);
 
 // Retrieve module instance.
-if (empty($id)) {
-    print_error('invalidid', 'kalvidpres');
-}
-
-if (!empty($id)) {
-
-    if (!$cm = get_coursemodule_from_id('kalvidpres', $id)) {
-        print_error('invalidcoursemodule');
-    }
-
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
-    }
-
-    if (!$kalvidpres = $DB->get_record('kalvidpres', array("id" => $cm->instance))) {
-        print_error('invalidid', 'kalvidpres');
-    }
-}
+list ($course, $cm) = get_course_and_cm_from_cmid($id, 'kalvidpres');
+$kalvidpres = $DB->get_record('kalvidpres', array("id" => $cm->instance), '*', MUST_EXIST);
 
 require_course_login($course->id, true, $cm);
-
-global $SESSION, $CFG;
 
 $PAGE->set_url('/mod/kalvidpres/view.php', array('id' => $id));
 $PAGE->set_title(format_string($kalvidpres->name));
@@ -66,16 +48,6 @@ $event->trigger();
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-echo $OUTPUT->header();
-
-$renderer = $PAGE->get_renderer('mod_kalvidpres');
-
-echo $OUTPUT->box_start('generalbox');
-
-echo format_module_intro('kalvidpres', $kalvidpres, $cm->id);
-
-echo $OUTPUT->box_end();
-
 // Require a YUI module to make the object tag be as large as possible.
 $params = array(
     'bodyclass' => $pageclass,
@@ -87,6 +59,12 @@ $params = array(
 );
 $PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
 
-echo $renderer->display_iframe($kalvidpres, $course->id);
+/** @var mod_kalvidpres_renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_kalvidpres');
 
-echo $OUTPUT->footer();
+echo $renderer->header();
+echo $renderer->box_start('generalbox');
+echo format_module_intro('kalvidpres', $kalvidpres, $cm->id);
+echo $renderer->box_end();
+echo $renderer->display_iframe($kalvidpres, $course->id);
+echo $renderer->footer();

@@ -101,12 +101,9 @@ $params = array(
     'editor' => $editor,
     'previewltilauncher' => $previewltilaunchurl->out(),
 );
-if($editor == 'atto')
-{
+if($editor == 'atto') {
     require_once('attobsepreview.php');
-}
-else
-{
+} else {
     $PAGE->requires->yui_module('moodle-local_kaltura-ltiservice', 'M.local_kaltura.init', array($params));
 
     echo $OUTPUT->header();

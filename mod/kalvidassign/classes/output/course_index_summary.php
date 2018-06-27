@@ -21,12 +21,14 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+namespace mod_kalvidassign\output;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Renderable course index summary
  */
-class kalvidassign_course_index_summary implements renderable {
+class course_index_summary implements \renderable {
     /** @var array assignments A list of course module info and submission counts or statuses */
     public $assignments = array();
     /** @var boolean usesections Does this course format support sections? */

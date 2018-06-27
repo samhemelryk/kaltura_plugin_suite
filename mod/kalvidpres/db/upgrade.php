@@ -30,7 +30,7 @@ function xmldb_kalvidpres_upgrade($oldversion) {
 
         // Changing type of field intro on table kalvidpres to text
         $table = new xmldb_table('kalvidpres');
-        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'name');
+        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, null, null, null, null, null, 'name');
 
         // Launch change of type for field intro
         $dbman->change_field_type($table, $field);
@@ -41,7 +41,7 @@ function xmldb_kalvidpres_upgrade($oldversion) {
 
     if ($oldversion < 2012010301) {
 
-            // Define index doc_entry_id_idx (not unique) to be dropped form kalvidpres
+        // Define index doc_entry_id_idx (not unique) to be dropped form kalvidpres
         $table = new xmldb_table('kalvidpres');
         $index = new xmldb_index('doc_entry_id_idx', XMLDB_INDEX_UNIQUE, array('doc_entry_id'));
 
