@@ -21,15 +21,12 @@
  * @author     Remote-Learner.net Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
+ *
+ * @var moodle_page $PAGE
  */
 
 require_once(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/config.php');
 require_once($CFG->dirroot.'/local/kaltura/locallib.php');
-//require_once('renderer.php');
-
-global $PAGE, $USER;
-
-require_login();
 
 $contextid = required_param('contextid', PARAM_INT);
 $height = required_param('height', PARAM_INT);
@@ -60,6 +57,8 @@ if ($context instanceof context_course) {
         }
     }
 }
+
+require_login($course, false, null, false);
 
 $launch['id'] = 1;
 $launch['cmid'] = 0;

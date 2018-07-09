@@ -23,6 +23,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['heading_mymedia'] = 'My Media';
 $string['invalid_launch_parameters'] = 'Invalid launch parameters';
 $string['mymedia:view'] = 'View My Media page';

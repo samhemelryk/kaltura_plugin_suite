@@ -23,12 +23,14 @@
  *
  */
 
-defined('MOODLE_INTERNAL') || die('Invalid access');
-
-global $CFG;
-require_once $CFG->dirroot. '/local/kalturamediagallery/lib.php';
+defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
+
+    // Needed for the use of the globals.
+    global $CFG;
+    require_once $CFG->dirroot. '/local/kalturamediagallery/lib.php';
+
     $settings = new admin_settingpage(
             'local_kalturamediagallery',
             get_string('pluginname', 'local_kalturamediagallery')

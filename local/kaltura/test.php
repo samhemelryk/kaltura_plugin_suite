@@ -1,22 +1,17 @@
 <?php
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
-require_once(dirname(__FILE__) . '/locallib.php');
-
-global $CFG, $USER, $PAGE;
+require_once($CFG->dirroot . '/local/kaltura/locallib.php');
 
 require_login();
+require_capability('moodle/site:config', $context);
 
 $context = context_system::instance();
 
-$url = new moodle_url('/local/kaltura/test.php');
-
-$PAGE->set_url($url);
+$PAGE->set_url(new moodle_url('/local/kaltura/test.php'));
 $PAGE->set_context($context);
 
 echo $OUTPUT->header();
-
-require_capability('moodle/site:config', $context);
 
 $session = local_kaltura_login(true, '', 2);
 
@@ -25,3 +20,5 @@ if ($session) {
 } else {
     echo 'Connection not successful';
 }
+
+echo $OUTPUT->footer();

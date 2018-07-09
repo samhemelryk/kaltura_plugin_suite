@@ -28,8 +28,6 @@ require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
 require_login();
 
-global $PAGE;
-
 $url = required_param('url', PARAM_URL);
 $width = required_param('width', PARAM_INT);
 $height = required_param('height', PARAM_INT);
@@ -101,8 +99,37 @@ $params = array(
     'editor' => $editor,
     'previewltilauncher' => $previewltilaunchurl->out(),
 );
-if($editor == 'atto') {
-    require_once('attobsepreview.php');
+if ($editor == 'atto') {
+
+    $PAGE->set_pagelayout('embedded');
+
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('preview', 'local_kaltura'));
+    ?>
+    <div id="KalturaAttoPreview"></div>
+    <script>
+        var data = {
+            'url': "<?php echo urldecode($url); ?>",
+            'width': <?php echo $width; ?>,
+            'height': <?php echo $height; ?>,
+            'title': "<?php echo addcslashes($title, '"'); ?>"
+        };
+        parent.kaltura_atto_embed_callback(data);
+        var iframe = Y.Node.create('<iframe></iframe>');
+        iframe.setAttribute('src', '<?php echo 'bsepreview_ltilaunch.php?playurl=' . urlencode($url); ?>');
+        iframe.setAttribute('alt', '<?php echo addcslashes($title, "'"); ?>');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setStyles({
+            height: '<?php echo $height; ?>px',
+            border: 'none',
+            width: '<?php echo $width; ?>px'
+        });
+        Y.one('#KalturaAttoPreview').setHTML(iframe);
+    </script>
+
+    <?php
+    echo $OUTPUT->footer();
+
 } else {
     $PAGE->requires->yui_module('moodle-local_kaltura-ltiservice', 'M.local_kaltura.init', array($params));
 

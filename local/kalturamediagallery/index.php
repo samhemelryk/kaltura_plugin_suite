@@ -27,17 +27,16 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 
-$PAGE->set_url('/local/kalturamediagallery/index.php', array('courseid' => $courseid));
-
-require_login($courseid);
-
 $course = get_course($courseid);
 $context = context_course::instance($course->id);
+
+$PAGE->set_url('/local/kalturamediagallery/index.php', array('courseid' => $courseid));
+$PAGE->set_context($context);
+
+require_login($course);
 require_capability('local/kalturamediagallery:view', $context);
 
 $mediagallery = get_string('heading_mediagallery', 'local_kalturamediagallery');
-
-$PAGE->set_context($context);
 $site = get_site();
 $header  = format_string($site->shortname).": $mediagallery";
 

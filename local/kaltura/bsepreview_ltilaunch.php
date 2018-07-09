@@ -1,10 +1,14 @@
 <?php
+
+/**
+ * TODO: Add some description of this file.
+ *
+ * @var moodle_page $PAGE
+ */
 require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
 require_login();
-
-global $PAGE;
 
 $playurl = required_param('playurl', PARAM_URL);
 
@@ -19,5 +23,3 @@ $launch['height'] = '300';
 $launch['custom_publishdata'] = '';
 $launch['source'] = $playurl;
 echo local_kaltura_request_lti_launch($launch, false);
-
-?>

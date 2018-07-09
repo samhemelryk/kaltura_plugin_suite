@@ -71,7 +71,7 @@ class local_kaltura_migration_form extends moodleform {
 
         $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('migration_start_continue', 'local_kaltura'));
         $buttonarray[] =& $mform->createElement('submit', 'startover', get_string('startover', 'local_kaltura'));
-        $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('back'));
+        $buttonarray[] =& $mform->createElement('cancel', 'cancel', get_string('back'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     }
 }

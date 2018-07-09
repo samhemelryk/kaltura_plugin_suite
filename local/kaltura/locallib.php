@@ -23,9 +23,7 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die;
 
 global $CFG; // should be defined in config.php
 
@@ -82,7 +80,6 @@ function local_kaltura_validate_kaf_module_request($module) {
  */
 function local_kaltura_get_lti_launch_container($withblocks = true) {
     $lti = new stdClass();
-    $container = 0;
 
     if (!empty($withblocks)) {
         $lti->launchcontainer = LTI_LAUNCH_CONTAINER_EMBED;
@@ -139,7 +136,6 @@ function local_kaltura_validate_mymedia_required_params($params) {
  * @return bool true if valid, otherwise false
  */
 function local_kaltura_validate_mediagallery_required_params($params) {
-    $valid = true;
 
     $expectedkeys = array(
         // The activity instance id
@@ -177,7 +173,6 @@ function local_kaltura_validate_mediagallery_required_params($params) {
  * @return bool true if valid, otherwise false
  */
 function local_kaltura_validate_browseembed_required_params($params) {
-    $valid = true;
 
     $expectedkeys = array(
         // The activity instance id
@@ -478,7 +473,6 @@ function local_kaltura_get_kaf_publishing_data() {
     $role = is_siteadmin($USER->id) ? KALTURA_LTI_ADMIN_ROLE : KALTURA_LTI_INSTRUCTOR_ROLE;
     $json = new stdClass();
     $json->courses = array();
-    $hascap = false;
 
     // If the user is not an admin then retrieve all of the user's enroled courses.
     if (KALTURA_LTI_ADMIN_ROLE != $role) {
@@ -624,7 +618,6 @@ function local_kaltura_url_contains_configured_hostname($url) {
  * @return string Returns the URL with the protocol.  An empty string is returned in the case of an exception being thrown.
  */
 function local_kaltura_add_protocol_to_url($url) {
-    $newurl = '';
     if (0 === strpos($url, 'https://')) {
         $newurl = $url;
     } else if (0 === strpos($url, 'http://')) {

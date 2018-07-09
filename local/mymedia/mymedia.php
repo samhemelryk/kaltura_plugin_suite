@@ -25,7 +25,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
-global $USER;
+$PAGE->set_context(context_system::instance());
 
 require_login();
 
@@ -33,7 +33,6 @@ $context = context_user::instance($USER->id);
 require_capability('local/mymedia:view', $context);
 
 $mymedia = get_string('heading_mymedia', 'local_mymedia');
-$PAGE->set_context(context_system::instance());
 $site = get_site();
 $header  = format_string($site->shortname).": $mymedia";
 

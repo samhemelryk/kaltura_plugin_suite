@@ -23,6 +23,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admin_secret'] = 'Admin secret';
 $string['admin_secret_desc'] = 'Enter the admin secret for your account.';
 $string['cancelbtn'] = 'Cancel';

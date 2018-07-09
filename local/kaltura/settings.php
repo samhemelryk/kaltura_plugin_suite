@@ -23,14 +23,12 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-// It must be included from a Moodle page.
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
-
-require_once($CFG->dirroot.'/local/kaltura/locallib.php');
+defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
+
+    // Needed for the defines that have been used.
+    require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
     // Add local plug-in configuration settings link to the navigation block.
     $settings = new admin_settingpage('local_kaltura', get_string('pluginname', 'local_kaltura'));

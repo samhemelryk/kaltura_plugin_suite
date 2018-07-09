@@ -26,9 +26,7 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die;
 
 /* This constant is used in the recursive functions as a hard stop flag.  The recursive functions will not go any deeper than this value. */
 define('KALTURA_MIGRATION_HARD_STOP', 5);

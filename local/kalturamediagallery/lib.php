@@ -12,6 +12,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Kaltura media gallery lib script.
  *
@@ -23,6 +25,7 @@
 
 define('LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_NAVIGATION_BLOCK', 0);
 define('LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_COURSE_SETTINGS', 1);
+
 /**
  * This function adds Kaltura media gallery link to the navigation block.  The code ensures that the Kaltura media gallery link is only displayed in the 'Current courses'
  * menu true.  In addition it check if the current context is one that is below the course context.

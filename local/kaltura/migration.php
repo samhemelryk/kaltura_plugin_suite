@@ -24,12 +24,15 @@
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot.'/local/kaltura/migration_form.php');
-require_once('locallib.php');
-require_once('API/KalturaClient.php');
-require_once($CFG->libdir.'/xmldb/xmldb_object.php');
-require_once($CFG->libdir.'/xmldb/xmldb_table.php');
-require_once('migrationlib.php');
+require_once($CFG->dirroot . '/local/kaltura/migration_form.php');
+require_once($CFG->dirroot . '/local/kaltura/locallib.php');
+require_once($CFG->dirroot . '/local/kaltura/API/KalturaClient.php');
+require_once($CFG->dirroot . '/local/kaltura/migrationlib.php');
+require_once($CFG->libdir . '/xmldb/xmldb_object.php');
+require_once($CFG->libdir . '/xmldb/xmldb_table.php');
+
+require_login(null, false);
+require_capability('local/kaltura:migrate_data', $context);
 
 $url = new moodle_url('/local/kaltura/migration.php');
 $context = context_system::instance();
@@ -44,27 +47,24 @@ $PAGE->navbar->add(get_string('migration_header', 'local_kaltura'));
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
-
 $PAGE->set_pagelayout('standard');
 $PAGE->set_pagetype('local-kaltura-migration');
 $PAGE->set_title($heading);
 $PAGE->set_heading($site->fullname);
-
-require_login(null, false);
-
-require_capability('local/kaltura:migrate_data', $context);
 
 $url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
 
 $form = new local_kaltura_migration_form();
 $redirectmessage = '';
 
-if ($data = $form->get_data()) {
+if ($form->is_cancelled()) {
     // User hit cancel. Redirect them back to the settings page.
-    if (isset($data->cancel)) {
-        redirect($url);
-    }
+    redirect($url);
+}
 
+if ($data = $form->get_data()) {
+
+    // Not strickly needed, get_data checks this internally, but doesn't hurt to have it.
     require_sesskey();
     $migrationstats = new local_kaltura_migration_progress();
 

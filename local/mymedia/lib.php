@@ -21,6 +21,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * This function adds my media links to the navigation block
  * @param global_navigation $navigation a global_navigation object

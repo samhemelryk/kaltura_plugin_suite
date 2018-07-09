@@ -23,6 +23,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $capabilities = array(
     'local/mymedia:view' => array(
         'captype' => 'read',

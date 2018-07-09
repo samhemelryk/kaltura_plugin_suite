@@ -20,12 +20,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
-
-require_once(dirname(dirname(dirname(__FILE__))) . '/lib/tablelib.php');
+global $CFG;
+require_once($CFG->dirroot . '/lib/tablelib.php');
 
 class local_mymedia_renderer extends plugin_renderer_base {
 
@@ -34,10 +32,9 @@ class local_mymedia_renderer extends plugin_renderer_base {
      *
      * @param array - array of Kaltura video entry objects
      *
-     * @return HTML markup
+     * @return string HTML markup
      */
     public function create_vidoes_table($video_list = array()) {
-        global $OUTPUT;
 
         $output      = '';
         $max_columns = 3;
@@ -103,7 +100,7 @@ class local_mymedia_renderer extends plugin_renderer_base {
     /**
      * This function creates HTML markup used to sort the video listing.
      *
-     * @return HTML Markup for sorting pulldown.
+     * @return string HTML Markup for sorting pulldown.
      */
     public function create_sort_option() {
         global $CFG, $SESSION;
@@ -205,8 +202,6 @@ class local_mymedia_renderer extends plugin_renderer_base {
     }
 
     public function create_options_table_lower($page) {
-        global $USER;
-
         $output = '';
 
         $attr   = array('border' => 0, 'width' => '100%');
@@ -232,7 +227,7 @@ class local_mymedia_renderer extends plugin_renderer_base {
      * This function creates HTML markup used to display the video name
      *
      * @param string - name of video
-     * @return HTML markup
+     * @return string HTML markup
      */
     public function create_video_name_markup($name) {
 
@@ -253,7 +248,7 @@ class local_mymedia_renderer extends plugin_renderer_base {
      * @param string - thumbnail URL
      * @param string - alternate text
      *
-     * @param HTML markup
+     * @return string HTML markup
      */
     public function create_video_thumbnail_markup($url, $alt) {
 

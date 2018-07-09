@@ -24,9 +24,7 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
-
-global $USER;
+require_once($CFG->dirroot . '/local/kaltura/locallib.php');
 
 require_login();
 

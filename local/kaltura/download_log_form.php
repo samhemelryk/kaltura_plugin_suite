@@ -23,7 +23,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
+
 /**
  * Download Kaltura logs form class.
  */
@@ -39,7 +40,7 @@ class local_kaltura_download_log_form extends moodleform {
 
         $buttonarray=array();
         $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('download'));
-        $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('cancel'));
+        $buttonarray[] =& $mform->createElement('cancel');
         $buttonarray[] =& $mform->createElement('submit', 'deletelogs', get_string('delete_logs', 'local_kaltura'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
     }

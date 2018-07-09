@@ -21,12 +21,17 @@
  * @author     Remote-Learner.net Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
+ *
+ * @var moodle_database $DB
+ * @var moodle_page $PAGE
+ * @var core_renderer $OUTPUT
  */
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/local/kaltura/download_log_form.php');
 
-global $DB;
+require_login(null, false);
+require_capability('local/kaltura:download_trace_logs', $context);
 
 $url = new moodle_url('/mod/lti/instructor_edit_tool_type.php');
 $context = context_system::instance();
@@ -38,29 +43,24 @@ $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('localplugins'));
 $PAGE->navbar->add(get_string('pluginname', 'local_kaltura'), new moodle_url('/admin/settings.php', array('section' => 'local_kaltura')));
 $PAGE->navbar->add(get_string('download_logs_title', 'local_kaltura'));
-$PAGE->set_url($url);
-$PAGE->set_context($context);
 
+$PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_pagetype('local-kaltura-download-log');
 $PAGE->set_title($heading);
 $PAGE->set_heading($site->fullname);
 
-require_login(null, false);
-
-require_capability('local/kaltura:download_trace_logs', $context);
-
 $url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
 $downloadurl = new moodle_url('/local/kaltura/download_log.php');
 
 $form = new local_kaltura_download_log_form();
+if ($form->is_cancelled()) {
+    redirect($url);
+}
 if ($data = $form->get_data()) {
-    // User hit cancel. Redirect them back to the settings page.
-    if (isset($data->cancel)) {
-        redirect($url);
-    }
 
+    // Not necessarily needed, but doesn't hurt.
     require_sesskey();
 
     // User hit submit button.  Check for records since the configured date.
