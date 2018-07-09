@@ -24,7 +24,7 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once($CFG->diroot . '/local/kaltura/locallib.php');
+require_once($CFG->dirroot . '/mod/kalvidassign/locallib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 $cmid = required_param('cmid', PARAM_INT);
@@ -58,7 +58,7 @@ if (false === local_kaltura_url_contains_configured_hostname($source) && !empty(
 }
 
 if (local_kaltura_validate_browseembed_required_params($launch)) {
-    echo local_kaltura_request_lti_launch($launch, $withblocks);
+    echo local_kaltura_request_lti_launch($launch, $withblocks, '');
 } else {
     echo get_string('invalid_launch_parameters', 'mod_kalvidassign');
 }
