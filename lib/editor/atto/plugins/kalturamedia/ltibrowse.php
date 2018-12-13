@@ -71,7 +71,7 @@ $launch['height'] = $height;
 $launch['custom_publishdata'] = '';
 
 if (local_kaltura_validate_browseembed_required_params($launch)) {
-    $content = local_kaltura_request_lti_launch($launch, $withblocks, $editor = 'atto');
+    $content = local_kaltura_request_lti_launch($launch, $withblocks, 'atto');
     echo $content;
 } else {
     echo get_string('invalid_launch_parameters', 'mod_kalvidres');

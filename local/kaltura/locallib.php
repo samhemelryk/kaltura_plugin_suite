@@ -334,15 +334,27 @@ function local_kaltura_strip_querystring($endpoint, $params) {
  * The function is modeled closely after @see lti_view().  The code was refactored because the original function relied too heavily on
  * there being an LTI tool defined in the LTI activity instance table.
  * @param array $ltirequest An array with parameters specifying some required information for an LTI launch.
- * @param array $withblocks True if Moodle blocks are to be included on the page else false.
+ * @param bool $withblocks True if Moodle blocks are to be included on the page else false.
+ * @param string|bool $editor The editor this is being launched for, e.g. "atto"
+ *     Set to false if not being launched for an editor
+ *     Set to true if the editor is not known, in which case the editor will be guessed based upon the users preference (most likely)
  * @return string Returns HTML required to initiate an LTI launch.
  */
-function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $editor = null) {
+function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $editor = true) {
     global $CFG, $USER;
-    
-    if(is_null($editor))
-    {
-        $editor = 'tinymce';
+
+    if (empty($editor)) {
+
+        // Normalise all empty values to '', this is passed as a param regardless.
+        $editor = '';
+
+    } else if ($editor === true) {
+
+        // A bit of a hack, this allows calls to this function to "guess the editor".
+        // It shouldn't happen, if you are coming from an editor you should know what editor you are coming from.
+        $editorobject = editors_get_preferred_editor();
+        $editor = substr(get_class($editorobject), 0, -(strlen('_texteditor')));
+
     }
 
     $requestparams = array();
