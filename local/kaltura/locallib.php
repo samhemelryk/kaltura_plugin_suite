@@ -594,6 +594,12 @@ function local_kaltura_get_config() {
     if (!empty($configsettings->kaf_uri) && !preg_match('#^https?://#', $configsettings->kaf_uri)) {
         $configsettings->kaf_uri = 'http://'.$configsettings->kaf_uri;
     }
+
+    // If there is a trailing slash in what the admin entered remove it, ensuring that the URI is consistent in this regard.
+    if (substr($configsettings->kaf_uri, -1, 1) === '/') {
+        $configsettings->kaf_uri = substr($configsettings->kaf_uri, 0, -1);
+    }
+
     return $configsettings;
 }
 
