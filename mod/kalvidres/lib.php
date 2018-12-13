@@ -114,19 +114,6 @@ function kalvidres_user_complete($course, $user, $mod, $kalvidres) {
 }
 
 /**
- * Given a course and a time, this module should find recent activity
- * that has occurred in kalvidres activities and print it out.
- * Return true if there was output, or false is there was none.
- *
- * @return boolean
- * @todo Finish documenting this function
- */
-function kalvidres_print_recent_activity($course, $viewfullnames, $timestart) {
-    // TODO: finish this function
-    return false;  //  True if anything was printed, otherwise false
-}
-
-/**
  * Function to be run periodically according to the moodle cron
  * This function searches for things that need to be done, such
  * as sending out mail, toggling flags etc ...
